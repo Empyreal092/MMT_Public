@@ -1,5 +1,5 @@
 %% Pseudospectral solver for the MMT system
-% For details of the equation and numerical method, see DuBuhler22
+% For details of the equation and numerical method, see DùBühler22
 
 %% Initialization
 timer_wholescipt = tic; % Start the timer for the whole scipt

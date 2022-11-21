@@ -1,10 +1,10 @@
 # Code to simulate the MMT model
-Code to simulate the one-dimensional Majda-McLaughlin-Tabak (MMT) system used in 
+Code to simulate the one-dimensional Majda-McLaughlin-Tabak (MMT) model used in 
 -   Dù, R.S., Bühler, O. _Domain dependence of wave turbulence theory for the Majda-McLaughlin-Tabak (MMT) model_. In Preparation.
 
 In short, the code solve the MMT model pseudospectrally using an Integrating Factor method with a Fourth-Order-Runge–Kutta timestepping method (IF-RK4). For more details, please refer to our paper.
 
-To start, run [``outer_driver.m``](https://github.com/Empyreal092/MMT_Public/blob/main/outer_driver.m). This outer wrapper specifies some the key tunable parameteres of the MMT model, then it calls the main solver: [``MMT_solver.m``](https://github.com/Empyreal092/MMT_Public/blob/main/MMT_solver.m)
+To start, run [``outer_driver.m``](https://github.com/Empyreal092/MMT_Public/blob/main/outer_driver.m). This outer wrapper specifies some the key tunable parameteres of the MMT model, then it calls the main solver: [``MMT_solver.m``](https://github.com/Empyreal092/MMT_Public/blob/main/MMT_solver.m).
 
 The main solver then calls functions and subscripts in the folder [``SubRoutine``](https://github.com/Empyreal092/MMT_Public/blob/main/SubRoutine). Here we list some key functions:
 
