@@ -1,0 +1,6 @@
+In parseArgs.m, line 48, I added 
+	matlabver = matlabver(1);
+
+This is because if you have anything other than MATLAB (e.g.: FINUFFT) that show up from the command
+	ver('MATLAB')
+the code will break. This is fixed by the line I added so that matlabver take the first element (which is MATLAB, hopefully...) in the struct.
