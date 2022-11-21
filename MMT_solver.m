@@ -197,15 +197,8 @@ if(new_run)
     
     %% Calculate Conserved Quatities for the IC (only happens for new run)
     intSample_t = [intSample_t t];
-    % Action and energy diagnostics
-    Conserve_Calc
-    Nsample = [Nsample Ntotal]; Psample = [Psample Ptotal];
-    Hsample = [Hsample Htotal]; H1sample = [H1sample H1]; H2sample = [H2sample H2];
-    % Slope calculations and save
-    LSFit
-    SlopeSampleI = [SlopeSampleI gI]; % keep track of the slopes
-    SlopeSampleDs = [SlopeSampleDs gDs]; % keep track of the slopes
-    SlopeSampleDl = [SlopeSampleDl gDl]; % keep track of the slopes
+    % action and energy diagnostics, and action density slopes
+    data_gather_intTimestep
     
     %% time in loop
     % t has been set by now, so:
@@ -275,15 +268,9 @@ while t <= t_end-dth
         % forcing minus dissipation
         Hfmd_ary = [Hfmd_ary sum((nf_av+nd_av).*ka(1:n/2))]; % for H_1
         Nfmd_ary = [Nfmd_ary sum(nf_av+nd_av)]; % for N
-        % Action and energy diagnostics
-        Conserve_Calc
-        Nsample = [Nsample Ntotal]; Psample = [Psample Ptotal];
-        Hsample = [Hsample Htotal]; H1sample = [H1sample H1]; H2sample = [H2sample H2];
-        % Slope calculations and save
-        LSFit
-        SlopeSampleI = [SlopeSampleI gI]; % keep track of the slopes
-        SlopeSampleDs = [SlopeSampleDs gDs]; % keep track of the slopes
-        SlopeSampleDl = [SlopeSampleDl gDl]; % keep track of the slopes
+        
+        % action and energy diagnostics, and action density slopes
+        data_gather_intTimestep
         
         tint=tint+dtint;
     end
@@ -316,19 +303,8 @@ if doruntimeplots
 end
 
 % calculate some diagnostics one last time
-% Action and energy diagnostics
 intSample_t = [intSample_t t];
-Conserve_Calc
-Nsample = [Nsample Ntotal];
-Hsample = [Hsample Htotal]; H1sample = [H1sample H1]; H2sample = [H2sample H2];
-Psample = [Psample Ptotal];
-H1_av_ary = [H1_av_ary H1_av];
-H2_av_ary = [H2_av_ary H2_av];
-% Slope calculations and save
-LSFit
-SlopeSampleI = [SlopeSampleI gI]; % keep track of the slopes
-SlopeSampleDs = [SlopeSampleDs gDs]; % keep track of the slopes
-SlopeSampleDl = [SlopeSampleDl gDl]; % keep track of the slopes
+data_gather_intTimestep
 
 Nfmd_ary = [Nfmd_ary sum(nf_av+nd_av)];
 Hfmd_ary = [Hfmd_ary sum((nf_av+nd_av).*ka(1:n/2))];
