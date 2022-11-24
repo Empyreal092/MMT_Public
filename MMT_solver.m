@@ -44,11 +44,14 @@ n=2^log_n; % Number of gridpoints and modes 13-17 are typical
 J=1:n; 
 
 % grid (physical and Fourier) settings
-dx=2*pi/n;
-x=0:dx:2*pi-dx;     % grid in physical space.
-k=[0:n/2 1-n/2:-1]; % grid in Fourier space.
+L  = 2*pi; % be careful when changing this away from 2*pi. Not tested!
+dx = L/n;
+x  = 0:dx:L-dx;     % grid in physical space.
+k_scale = 2*pi/L; % be careful when this is not 1. Not tested!
+k  = [0:n/2 1-n/2:-1]*k_scale; % grid in Fourier space.
 
-dt=0.01*1/t_scl; % time step, to be tuned manually, simulation in the paper uses: 
+% time step, to be tuned manually, simulation in the paper uses: 
+if ~exist('dt','var') dt=0.01*1/t_scl; end
 % dt=0.01*0.1/t_scl;
 dth=dt/2; % define a half timestep for the RK4 timestepping scheme
 
@@ -63,8 +66,8 @@ IC = 'zero';
 % Forcing type: 'No forcing'; 'WN'; 'Instab'
 FT="WN";
 % spectral location of forcing
-if ~exist('frc_pos','var') frc_pos = 200; end
-kf=[-1 0 1 2]+frc_pos;
+if ~exist('frc_pos','var') frc_pos = 200*k_scale; end
+kf=[-1 0 1 2]*k_scale+frc_pos;
 
 % if the forcing is white noise, we can calculate the action input from
 % forcing theoretically:
@@ -137,7 +140,10 @@ switch FT
         dk_jf = (dsIR*ak(jf).^-8+dsUV*ak((jf)).^8);
         f_dcorr = f_val*sqrt(dt)*diss1(jf);
         forcing_msg = "Forcing: "+FT+" @ "+mat2str(kf)+" w/ NFlux: " + NfluxTheory; disp(forcing_msg);
-        nfabs = zeros(1,n); nfabs(jf) = 2*f_val^2; nfabs = 2*nfabs(1:n/2);
+        % the formula in the paper is for N/L input. Other time tendency
+        % quantities are for N, therefore we multiply by L in nfabs. 
+        % Now sum(nfabs) = NfluxTheory*L
+        nfabs = zeros(1,n); nfabs(jf) = 2*f_val^2; nfabs = 2*nfabs(1:n/2)*L;
         forc1 = ones(1,n); forch = ones(1,n); % forcing factor is just one, WN forcing is implemented seperately
     case 'Instab'
         jf=J(ismember(ak,kf)); nf=length(jf);
@@ -167,10 +173,10 @@ if(new_run)
             IC_msg = "IC: "+IC; disp(IC_msg);
         case 'uniform_spectral'
             uniform_str = 1e-5;
-            theta=pi*rand(1,n);
             phi_0=uniform_str/2*(randn(1,n)+1i*randn(1,n));
             IC_msg = "IC: "+IC+"; w/ magnitute: "+ uniform_str; disp(IC_msg);
     end
+    % phi here is phi_paper/L, this definition works better with fft
     phi=phi_0;
     %% Samples Setup
     % Run time samples, collected at integer time steps. 
@@ -180,7 +186,7 @@ if(new_run)
     % Difference between forcing and dissipation for the integral quatities
     switch FT
         case 'WN'
-            Nfmd_ary = NfluxTheory;
+            Nfmd_ary = sum(nfabs);
             Hfmd_ary = sum(nfabs.*ka(1:n/2)); % Forcing density of action
         case 'Instab'
             Nfmd_ary = 0;
@@ -226,7 +232,8 @@ while t <= t_end-dth
     RHSm = (itfm1.*RHS_1 + 2*itfmh.*RHS_2 + 2*itfmh.*RHS_3 + itfm0.*RHS_4)/6;
 
     % Computation of one-sided action density derivative from an evluatino of RHS
-    nt=[2*real(RHS_1(1).*conj(phi(1))) 2*real( RHS_1(2:n/2).*conj(phi(2:n/2)) + RHS_1(n:-1:n/2+2).*conj(phi(n:-1:n/2+2)) )];
+    % phi here is phi_paper/L, thus the nonlinear flux needs the L multiplication instead of division
+    nt=L*[2*real(RHS_1(1).*conj(phi(1))) 2*real( RHS_1(2:n/2).*conj(phi(2:n/2)) + RHS_1(n:-1:n/2+2).*conj(phi(n:-1:n/2+2)) )];
 
     % Now update phi except the WN forcing
     phi = itfm1.*phi + dt*RHSm;
@@ -242,7 +249,8 @@ while t <= t_end-dth
     if t >= ts-dth % sampling step for diagnostics
         %% more disgonostic
         % calculate nk at current time
-        nk_spec   = [abs(phi(1)).^2 abs(phi(2:n/2)).^2 + abs(phi(n:-1:n/2+2)).^2];
+        % phi here is phi_paper/L, thus nk needs the L multiplication instead of division
+        nk_spec   = L*[abs(phi(1)).^2 abs(phi(2:n/2)).^2 + abs(phi(n:-1:n/2+2)).^2];
         % time averages
         nt_av   = nt_av + (nt-nt_av)*tsfac; % of dt(n_k)
         nspec_av  = nspec_av + (nk_spec - nspec_av)*tsfac; % of n_k

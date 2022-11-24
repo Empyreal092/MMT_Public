@@ -43,7 +43,7 @@ loglog(kpos,1/64*cDl*kpos.^gDl,'b')
 plot([kminDl kmaxDl],[ylim_bot ylim_bot],'b','Linewidth',3)
 plot([kminDs kmaxDs],[ylim_bot ylim_bot],'r','Linewidth',3)
 plot([kminI kmaxI],[ylim_bot ylim_bot],'k','Linewidth',3)
-xline(n/2), xline(n/4,'LineStyle','--'),grid on, grid minor, grid minor
+xline(n/2*k_scale), xline(n/4*k_scale,'LineStyle','--'),grid on, grid minor, grid minor
 % plot the spectral, slow and fast average version.
 loglog(abs(k(1:n/2)), nspec_av_fast,'y')
 loglog(abs(k(1:n/2)), nspec_av,'k'),
@@ -78,15 +78,16 @@ plot(intSample_t,H1sample,'Color','b'); hold on
 plot(intSample_t,H2sample,'Color','r');
 
 xlim([intSample_t(1) intSample_t(end)])
-title("$H_1$ = "+H1sample(end) + ", $H_2$ avg = "+H2sample(end)+...
-    ", $H_2/H$ = "+H2sample(end)/(H1sample(end)+H2sample(end)))
+title("$H_1$ = " + round(H1sample(end),3) + ...
+    ", $H_2$ = " + round(H2sample(end),3) + ...
+    ", $H_2/H$ = " + round(H2sample(end)/(H1sample(end)+H2sample(end)),3))
 hold off
 
 %% Plot: N Flux
 flux_format = '%.2e';
 subaxis(2,3,4);
 % plot the N flux due to the nonlinearity
-semilogx(ak(2:n/2),FluxN(2:end),'.','Color',[0 0.4470 0.7410]); hold on
+semilogx(ak(2:n/2),FluxN(2:end),'.','Color',[0 158 115]/256); hold on
 % plot the change due to the dissipation, this is weighted in the area norm
 semilogx(ak(2:n/2),ak(2:n/2).*nd_av(2:end),'b')
 % plot the change due to the forcing
@@ -95,9 +96,10 @@ hold off
 
 xlim([1 10^5]),
 left_perc = (-min(FluxN))/(-min(FluxN)+max(FluxN))*100;
-title(["$N$ flux: Leftward perc = "+num2str(left_perc,4)+"\%",...
+title(["$N$ flux: Upscale = "+num2str(left_perc,4)+"\%",...
     "D = "+num2str(sum(nd_av),flux_format)+", F-D = "+num2str(sum(nf_av+nd_av),flux_format)])
-xlabel('$|k|$'); ylabel('$F_n$')
+xlabel('$|k|$'); 
+ylabel('$N$ Flux')
 
 % inset for Forcing-minus-Dissipation History
 sub_pos = get(gca, 'Position');
@@ -105,6 +107,8 @@ Nfmd_inset = axes('Parent', gcf, ...
     'Position', [sub_pos(1)+.17 sub_pos(2)+.025 sub_pos(3)-.2 sub_pos(4)-.22]); box on
 % plot the Forcing-minus-Dissipation History
 plot(Nfmd_inset, intSample_t, Nfmd_ary); hold on; 
+% xlabel('$t$')
+ylabel('F-D')
 yline(0)
 xlim([intSample_t(1) intSample_t(end)])
 set(gca, 'FontName', 'Times New Roman', 'FontSize', 8); set(gca, 'Color', 'None'); 
@@ -113,7 +117,7 @@ hold off
 %% Plot: H1 Flux
 subaxis(2,3,5);
 % plot the H_1 flux due to the nonlinearity
-semilogx(ak(2:n/2),FluxE(2:end),'.'); hold on
+semilogx(ak(2:n/2),FluxE(2:end),'.','Color',[0 158 115]/256); hold on
 % plot the change due to the dissipation, this is weighted in the area norm
 semilogx(ak(2:n/2),ak(2:n/2).*ka(2:n/2).*nd_av(2:end),'b')
 % plot the change due to the forcing
@@ -122,9 +126,10 @@ hold off
 
 xlim([1 10^5]),
 right_perc = (max(FluxE))/(-min(FluxE(1:150))+max(FluxE))*100;
-title(["$H_1$ flux, Rightward perc = "+num2str(right_perc,4)+"\%",...
+title(["$H_1$ flux, Downscale = "+num2str(right_perc,4)+"\%",...
     "D = "+num2str(sum(nd_av.*ka(1:n/2)),flux_format)+", F-D = "+num2str(sum((nf_av+nd_av).*ka(1:n/2)),flux_format)])
-ylabel('$F_e$')
+xlabel('$|k|$'); 
+ylabel('$H_1$ Flux')
 
 %%
 drawnow
