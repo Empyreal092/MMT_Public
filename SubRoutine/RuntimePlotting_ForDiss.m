@@ -51,7 +51,7 @@ legend(mat2str([kminI kmaxI]),mat2str([kminDs kmaxDs]),mat2str([kminDl kmaxDl]))
 title(sprintf('Inertial ranges spectrum slopes = %.3f, %.3f, %.3f',gI,gDs,gDl)),% do not change the order of these
 
 xlabel('$|k|$'); ylabel('$n_k$'),
-axis([1 10^5 ylim_bot ylim_top]),
+axis([k_scale 10^5*k_scale ylim_bot ylim_top]),
 hold off
 
 %% Plot: Integral Quatities
@@ -94,7 +94,7 @@ semilogx(ak(2:n/2),ak(2:n/2).*nd_av(2:end),'b')
 semilogx(ak(2:n/2),nf_av(2:end),'r'); 
 hold off 
 
-xlim([1 10^5]),
+xlim([k_scale 10^5*k_scale]),
 left_perc = (-min(FluxN))/(-min(FluxN)+max(FluxN))*100;
 title(["$N$ flux: Upscale = "+num2str(left_perc,4)+"\%",...
     "D = "+num2str(sum(nd_av),flux_format)+", F-D = "+num2str(sum(nf_av+nd_av),flux_format)])
@@ -124,7 +124,7 @@ semilogx(ak(2:n/2),ak(2:n/2).*ka(2:n/2).*nd_av(2:end),'b')
 semilogx(ak(2:n/2),ka(2:n/2).*nf_av(2:end),'r'); 
 hold off 
 
-xlim([1 10^5]),
+xlim([k_scale 10^5*k_scale]),
 right_perc = (max(FluxE))/(-min(FluxE(1:150))+max(FluxE))*100;
 title(["$H_1$ flux, Downscale = "+num2str(right_perc,4)+"\%",...
     "D = "+num2str(sum(nd_av.*ka(1:n/2)),flux_format)+", F-D = "+num2str(sum((nf_av+nd_av).*ka(1:n/2)),flux_format)])

@@ -122,8 +122,8 @@ if ~diss_switch
     dsIR=0;dsUV=0;
 else
     disp("Dissipation: ON w/ IR "+IR_diss_pos+", UV "+UV_diss_pos)
-    dsIR=5e2*(2^IR_diss_pos/2^1)^8*frc_scl;
-    dsUV=5e-37*(2^17/2^UV_diss_pos)^8*frc_scl;
+    dsIR=5e2*((2^IR_diss_pos*k_scale)/2^1)^8*frc_scl;
+    dsUV=5e-37*(2^17/(2^UV_diss_pos*k_scale))^8*frc_scl;
 end
 diss1=exp(-(dsIR*ak.^-8+dsUV*ak.^8)*dt); % implimentation of dissipation
 dissh=exp(-(dsIR*ak.^-8+dsUV*ak.^8)*dth);
