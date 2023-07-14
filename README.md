@@ -1,6 +1,6 @@
 # Code to simulate the MMT model
 Code to simulate the one-dimensional Majda-McLaughlin-Tabak (MMT) model used in 
--   Dù, R.S., Bühler, O. _The impact of frequency bandwidth on a one-dimensional model for dispersive wave turbulence_. Submitted to Journal of Nonlinear Science.
+-   Dù, R.S., Bühler, O., 2023. The Impact of Frequency Bandwidth on a One-Dimensional Model for Dispersive Wave Turbulence. J Nonlinear Sci 33, 81.
 
 In short, the code solve the MMT model pseudospectrally using an Integrating Factor method with fourth-order-Runge–Kutta timestepping (IF-RK4). For more details, please refer to our paper.
 
